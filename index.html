@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReadmeBoost — générateur de README qui fait remarquer ton projet</title>
+<meta name="description" content="Crée un README soigné avec badges, sections claires et checklist de visibilité GitHub. Gratuit, sans compte.">
+<style>
+:root{--bg:#0b0d14;--card:#141826;--line:#262c40;--tx:#e6e9f5;--mut:#8891b4;--acc:#7c5cff;--ok:#2ee59d;--warn:#ffb020}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+header{padding:28px 20px 8px;max-width:1200px;margin:auto}
+h1{margin:0;font-size:clamp(22px,4vw,30px)}
+h1 span{background:linear-gradient(90deg,#7c5cff,#2ee59d);-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{color:var(--mut);margin:6px 0 0}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:18px;max-width:1200px;margin:auto;padding:18px 20px 40px}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+h2{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin:0 0 12px}
+label{display:block;font-size:13px;color:var(--mut);margin:12px 0 4px}
+input,textarea,select{width:100%;padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#0e1120;color:var(--tx);font:inherit}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--acc);outline-offset:1px}
+textarea{min-height:70px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chk{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chk label{margin:0;display:flex;align-items:center;gap:6px;color:var(--tx);background:#0e1120;border:1px solid var(--line);padding:6px 10px;border-radius:999px;cursor:pointer;font-size:13px}
+.chk input{width:auto}
+button{font:inherit;cursor:pointer;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:#1b2135;color:var(--tx);transition:.15s}
+button:hover{border-color:var(--acc)}
+button.pri{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.score{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.ring{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:18px;background:conic-gradient(var(--ok) calc(var(--p)*1%),#222840 0)}
+.ring b{width:56px;height:56px;border-radius:50%;background:var(--card);display:grid;place-items:center}
+ul.check{list-style:none;padding:0;margin:0}
+ul.check li{padding:7px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;font-size:14px}
+ul.check li:last-child{border:0}
+ul.check .y{color:var(--ok)}ul.check .n{color:var(--warn)}
+pre{margin:0;white-space:pre-wrap;word-break:break-word;background:#0e1120;border:1px solid var(--line);border-radius:12px;padding:14px;font:13px/1.55 ui-monospace,Consolas,monospace;max-height:620px;overflow:auto}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{padding:6px 12px;font-size:13px}
+.tabs button.on{border-color:var(--acc);background:rgba(124,92,255,.15)}
+.hint{color:var(--mut);font-size:12px;margin-top:10px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--card);border:1px solid var(--ok);padding:8px 14px;border-radius:999px;opacity:0;transition:.3s;pointer-events:none}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <h1>Readme<span>Boost</span></h1>
+  <p>Un README clair et bien présenté, c'est ce qui fait cliquer, puis mettre une étoile.</p>
+</header>
+
+<main>
+  <section class="card">
+    <h2>1 · Ton projet</h2>
+    <div class="row">
+      <div><label for="name">Nom du projet *</label><input id="name" placeholder="mon-super-outil"></div>
+      <div><label for="user">Pseudo GitHub</label><input id="user" placeholder="ton-pseudo"></div>
+    </div>
+    <label for="desc">Description en une phrase *</label>
+    <input id="desc" placeholder="Un outil qui fait X en Y secondes">
+    <label for="long">Présentation (optionnel)</label>
+    <textarea id="long" placeholder="Pourquoi ce projet existe, ce qu'il résout, pour qui…"></textarea>
+    <div class="row">
+      <div><label for="lang">Langage</label>
+        <select id="lang"><option>JavaScript</option><option>TypeScript</option><option>Python</option><option>HTML/CSS</option><option>Go</option><option>Rust</option><option>C#</option><option>Autre</option></select></div>
+      <div><label for="lic">Licence</label>
+        <select id="lic"><option>MIT</option><option>Apache-2.0</option><option>GPL-3.0</option><option>Aucune</option></select></div>
+    </div>
+    <div class="row">
+      <div><label for="demo">Lien de démo (optionnel)</label><input id="demo" placeholder="https://…github.io/…"></div>
+      <div><label for="tags">Mots-clés (séparés par des virgules)</label><input id="tags" placeholder="cli, outil, web"></div>
+    </div>
+    <label>Sections à inclure</label>
+    <div class="chk" id="sections">
+      <label><input type="checkbox" checked data-s="fonc"> Fonctionnalités</label>
+      <label><input type="checkbox" checked data-s="install"> Installation</label>
+      <label><input type="checkbox" checked data-s="usage"> Utilisation</label>
+      <label><input type="checkbox" checked data-s="screens"> Captures d'écran</label>
+      <label><input type="checkbox" checked data-s="contrib"> Contribuer</label>
+      <label><input type="checkbox" checked data-s="star"> Appel à étoile</label>
+    </div>
+    <div class="btns">
+      <button class="pri" id="copy">Copier le README</button>
+      <button id="dl">Télécharger .md</button>
+    </div>
+    <p class="hint">Tout se fait dans ton navigateur. Rien n'est envoyé nulle part.</p>
+  </section>
+
+  <section class="card">
+    <h2>2 · Score de visibilité</h2>
+    <div class="score"><div class="ring" id="ring" style="--p:0"><b id="pct">0%</b></div>
+      <div><strong id="lvl">À compléter</strong><div class="hint" style="margin:2px 0 0">Ces points comptent vraiment pour la découverte sur GitHub.</div></div></div>
+    <ul class="check" id="checks"></ul>
+
+    <div class="tabs" style="margin-top:18px">
+      <button class="on" data-t="md">Markdown</button>
+      <button data-t="prev">Aperçu brut</button>
+    </div>
+    <pre id="out"></pre>
+    <p class="hint">Astuce : ajoute une capture ou un GIF dans le README, c'est le premier élément que les visiteurs regardent.</p>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+(() => {
+  const $ = q => document.querySelector(q), $$ = q => [...document.querySelectorAll(q)];
+  const F = { name: $('#name'), user: $('#user'), desc: $('#desc'), long: $('#long'), lang: $('#lang'), lic: $('#lic'), demo: $('#demo'), tags: $('#tags') };
+  let view = 'md';
+
+  const enc = s => encodeURIComponent(s.replace(/-/g, '--').replace(/_/g, '__').replace(/ /g, '_'));
+  const badge = (label, msg, color) => `![${label}](https://img.shields.io/badge/${enc(label)}-${enc(msg)}-${color}?style=flat-square)`;
+
+  function data() {
+    const d = {};
+    for (const k in F) d[k] = F[k].value.trim();
+    d.sections = $$('#sections input').filter(c => c.checked).map(c => c.dataset.s);
+    d.tags = d.tags.split(',').map(t => t.trim().toLowerCase().replace(/\s+/g, '-')).filter(Boolean);
+    return d;
+  }
+
+  function build(d) {
+    const slug = d.name.replace(/\s+/g, '-') || 'mon-projet';
+    const repo = d.user ? `https://github.com/${d.user}/${slug}` : '';
+    const lic = d.lic === 'Aucune' ? '' : d.lic;
+    const has = s => d.sections.includes(s);
+    const L = [];
+    L.push(`# ${d.name || 'Mon projet'}`, '');
+    const bd = [];
+    if (d.lang) bd.push(badge('langage', d.lang, '4f46e5'));
+    if (lic) bd.push(badge('licence', lic, '2ea44f'));
+    bd.push(badge('statut', 'actif', '0ea5e9'));
+    if (repo) bd.push(`[![Étoiles](https://img.shields.io/github/stars/${d.user}/${slug}?style=flat-square)](${repo}/stargazers)`);
+    L.push(bd.join(' '), '');
+    L.push(`> ${d.desc || 'Une phrase qui dit ce que fait le projet.'}`, '');
+    if (d.demo) L.push(`**[▶ Essayer la démo](${d.demo})**`, '');
+    if (d.long) L.push(d.long, '');
+    if (has('screens')) L.push('## Aperçu', '', '<!-- Ajoute ici une capture ou un GIF : c\'est le plus gros levier de visibilité -->', '![Capture d\'écran](docs/capture.png)', '');
+    if (has('fonc')) L.push('## ✨ Fonctionnalités', '', '- Fonctionnalité principale, formulée comme un bénéfice', '- Deuxième point fort', '- Simple à prendre en main', '');
+    if (has('install')) L.push('## 🚀 Installation', '', '```bash', `git clone ${repo || 'https://github.com/USER/REPO'}.git`, `cd ${slug}`, '# instructions d\'installation', '```', '');
+    if (has('usage')) L.push('## 🛠 Utilisation', '', '```bash', '# exemple de commande ou de code', '```', '');
+    if (has('contrib')) L.push('## 🤝 Contribuer', '', 'Les idées, retours et PR sont les bienvenus. Ouvre une *issue* pour discuter avant une grosse modification.', '');
+    if (lic) L.push('## 📄 Licence', '', `Distribué sous licence ${lic}. Voir le fichier LICENSE.`, '');
+    if (has('star')) L.push('---', '', `⭐ Si ce projet t'aide, mets une étoile : ça aide les autres à le trouver !`, '');
+    if (d.tags.length) L.push(d.tags.map(t => '`#' + t + '`').join(' '), '');
+    return L.join('\n');
+  }
+
+  function checks(d) {
+    const c = [
+      ['Nom clair et court', !!d.name],
+      ['Description en une phrase', d.desc.length >= 20],
+      ['Pseudo GitHub renseigné (badges et liens)', !!d.user],
+      ['Licence choisie', d.lic !== 'Aucune'],
+      ['Démo cliquable ou page GitHub Pages', !!d.demo],
+      ['Mots-clés / topics (au moins 3)', d.tags.length >= 3],
+      ['Présentation du problème résolu', d.long.length >= 60],
+      ['Section Installation', d.sections.includes('install')],
+      ['Capture d\'écran ou GIF', d.sections.includes('screens')],
+      ['Appel à étoile', d.sections.includes('star')]
+    ];
+    return c;
+  }
+
+  function render() {
+    const d = data(), md = build(d), c = checks(d);
+    const ok = c.filter(x => x[1]).length, p = Math.round(ok / c.length * 100);
+    $('#ring').style.setProperty('--p', p);
+    $('#pct').textContent = p + '%';
+    $('#lvl').textContent = p >= 90 ? 'Prêt à partager 🚀' : p >= 60 ? 'Presque là' : 'À compléter';
+    $('#checks').innerHTML = c.map(([t, v]) => `<li><span class="${v ? 'y' : 'n'}">${v ? '✔' : '○'}</span>${t}</li>`).join('');
+    $('#out').textContent = md;
+    $('#out').dataset.raw = md;
+  }
+
+  Object.values(F).forEach(el => el.addEventListener('input', render));
+  $$('#sections input').forEach(el => el.addEventListener('change', render));
+  $$('.tabs button').forEach(b => b.onclick = () => {
+    view = b.dataset.t;
+    $$('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+    $('#out').textContent = view === 'md' ? build(data()) : build(data());
+  });
+
+  const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 1600); };
+  $('#copy').onclick = async () => {
+    const md = build(data());
+    try { await navigator.clipboard.writeText(md); toast('README copié ✔'); }
+    catch { const r = document.createRange(); r.selectNodeContents($('#out')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Sélectionné : fais Ctrl+C'); }
+  };
+  $('#dl').onclick = () => {
+    const d = data(), a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([build(d)], { type: 'text/markdown' }));
+    a.download = 'README.md'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+
+  F.name.value = 'mon-super-outil';
+  F.desc.value = 'Un outil qui fait gagner du temps sur une tâche répétitive.';
+  render();
+})();
+</script>
+</body>
+</html>
